@@ -1,12 +1,18 @@
 name = "ihrss-worker"
 main = "src/worker.ts"
 compatibility_date = "2023-08-07"
+compatibility_flags = [ "nodejs_compat" ]
+
+# browser = { binding = "MYBROWSER", type = "browser" }
 
 # Variable bindings. These are arbitrary, plaintext strings (similar to environment variables)
 # Note: Use secrets to store sensitive data.
 # Docs: https://developers.cloudflare.com/workers/platform/environment-variables
-# [vars]
-# MY_VARIABLE = "production_value"
+[vars]
+BASE_URL = "https://www.indiehackers.com"
+RSS_TITLE = "Indie Hackers"
+RSS_DESCRIPTION = "Indie Hackers RSS"
+RSS_URL = "http://localhost:3000"
 
 # Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
 # Docs: https://developers.cloudflare.com/workers/runtime-apis/kv

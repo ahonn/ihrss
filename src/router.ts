@@ -1,20 +1,71 @@
 import { Router } from 'itty-router';
+import * as cheerio from 'cheerio';
+import { capitalize } from 'lodash-es';
+import { Feed } from 'feed';
+import puppeteer from '@cloudflare/puppeteer';
+import pkg from '../package.json';
+import parserPost from './post';
 
-// now let's create a router (note the lack of "new")
 const router = Router();
 
-// GET collection index
-router.get('/api/todos', () => new Response('Todos Index!'));
+const SUPORTED_TYPES = ['organic', 'newest', 'featured'];
 
-// GET item
-router.get('/api/todos/:id', ({ params }) => new Response(`Todo #${params.id}`));
+router.get('/:type', async ({ params }, env) => {
+	if (!SUPORTED_TYPES.includes(params.type)) {
+		return new Response(`Not found`, { status: 404 });
+	}
 
-// POST to the collection (we'll use async here)
-router.post('/api/todos', async (request) => {
-	const content = await request.json();
+	const res = await fetch(env.BASE_URL!);
+	const html = await res.text();
+	const $ = cheerio.load(html);
+	const $organic = $(`.${params.type}`);
+	const $links = $organic.find('a.story__text-link');
 
-	return new Response('Creating Todo: ' + JSON.stringify(content));
+	const urls = Array.from($links).map((el) => $(el).attr('href'));
+	const posts = await Promise.all(urls.map((url) => parserPost(env.BASE_URL + url!)));
+
+	const feed = new Feed({
+		title: `${env.RSS_TITLE}: ${capitalize(params.type)}`,
+		description: env.RSS_DESCRIPTION,
+		id: env.BASE_URL!,
+		link: env.BASE_URL!,
+		copyright: ``,
+		generator: `${pkg.name} ${pkg.version}`,
+		feedLinks: {
+			rss2: `${env.RSS_URL}/rss.xml`,
+		},
+	});
+
+	posts.map((post) => {
+		feed.addItem({
+			title: post.title,
+			link: post.link,
+			description: post.description,
+			author: [post.author],
+			category: [{ name: post.group }],
+			date: post.date,
+			published: post.date,
+		});
+	});
+
+	return new Response(feed.rss2(), {
+		status: 200,
+		headers: { 'Content-Type': `application/xml` },
+	});
 });
+
+// router.get('/group/:name', async ({ params }, env) => {
+// 	const browser = await puppeteer.launch(env.MYBROWSER);
+// 	const page = await browser.newPage();
+// 	await page.goto(env.BASE_URL! + `/groups/${params.name}`);
+// 	const img = await page.screenshot();
+// 	await browser.close();
+// 	return new Response(img, {
+// 		headers: {
+// 			'content-type': 'image/jpeg',
+// 		},
+// 	});
+// });
 
 // 404 for everything else
 router.all('*', () => new Response('Not Found.', { status: 404 }));
