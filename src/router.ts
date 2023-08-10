@@ -2,13 +2,15 @@ import { Router } from 'itty-router';
 import * as cheerio from 'cheerio';
 import { capitalize } from 'lodash-es';
 import { Feed } from 'feed';
-import puppeteer from '@cloudflare/puppeteer';
+// import puppeteer from '@cloudflare/puppeteer';
 import pkg from '../package.json';
 import parserPost from './post';
 
 const router = Router();
 
 const SUPORTED_TYPES = ['organic', 'newest', 'featured'];
+
+router.get('/', () => new Response(`Indie Hackers RSS!`));
 
 router.get('/:type', async ({ params }, env) => {
 	if (!SUPORTED_TYPES.includes(params.type)) {
