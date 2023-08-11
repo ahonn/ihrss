@@ -10,12 +10,12 @@
 
 ### Based on Homepage
 ```
-https://ihrss.io/stories/:type
+https://ihrss.io/:type
 ```
 
-- Organic Stories: `https://ihrss.io/stories/organic`
-- Featured Stories: `https://ihrss.io/stories/featured`
-- Newest Stories: `https://ihrss.io/stories/newest`
+- Organic Stories: `https://ihrss.io/organic`
+- Featured Stories: `https://ihrss.io/featured`
+- Newest Stories: `https://ihrss.io/newest`
 
 ### By Group
 
