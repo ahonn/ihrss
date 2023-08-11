@@ -5,7 +5,7 @@ import topRouter from './routers/top';
 
 const router = Router();
 
-router.get('/', () => new Response(`Indie Hackers RSS!`));
+router.get('/', () => Response.redirect('https://github.com/ahonn/ihrss', 301));
 router.get('/:type', storiesRouter);
 router.get('/group/:name', groupRouter);
 router.get('/top/:type', topRouter);

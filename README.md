@@ -1,6 +1,6 @@
 # Indie Hackers RSS
 
-[ihrss.io] provides users to access the latest and most popular stories from [Indie Hackers](https://www.indiehackers.com) in RSS format.
+[ihrss.io](https://ihrss.io) provides users to access the latest and most popular stories from [Indie Hackers](https://www.indiehackers.com) in RSS format.
 
 > RSS updates are not real-time, they are updated every five minutes to minimize the impact on the Indie Hackers website.
 
@@ -9,6 +9,9 @@
 ## Feeds
 
 ### Based on Homepage
+```
+https://ihrss.io/stories/:type
+```
 
 - Organic Stories: `https://ihrss.io/stories/organic`
 - Featured Stories: `https://ihrss.io/stories/featured`
@@ -26,15 +29,14 @@ https://ihrss.io/group/:name
 - 12 Startups in 12 Months: `https://ihrss.io/group/12-startups-in-12-months`
 
 ### By Time
+```
+https://ihrss.io/top/(today|week|month|all-time)
+```
 
 - Today: `https://ihrss.io/top/today` (Equivalent to the entire homepage feed)
 - This Week: `https://ihrss.io/top/week`
 - This Month: `https://ihrss.io/top/month`
 - All Time: `https://ihrss.io/top/all-time`
-
-## Usage
-
-Simply append the above paths to the service URL and add them to your preferred RSS reader to start receiving the related content.
 
 ## Contribution
 
