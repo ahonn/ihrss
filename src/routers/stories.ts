@@ -3,21 +3,11 @@ import * as cheerio from 'cheerio';
 import { capitalize } from 'lodash-es';
 import { Feed } from 'feed';
 import pkg from '../../package.json';
-import parserPost from '../post';
-import { getFeedItemFromPost } from '../utils';
+import { getFeedItemFromPost, parserPost } from '../utils';
 
 export default async function storiesRouter({ params }: IRequest, env: Env) {
 	if (!['organic', 'newest', 'featured'].includes(params.type)) {
 		return new Response(`Not found`, { status: 404 });
-	}
-
-	const key = `stories:${params.type}`;
-	const cache = await env.MY_KV_NAMESPACE.get(key, { type: 'text' });
-	if (cache) {
-		return new Response(cache, {
-			status: 200,
-			headers: { 'Content-Type': `application/xml` },
-		});
 	}
 
 	const res = await fetch(env.BASE_URL!);
@@ -41,10 +31,6 @@ export default async function storiesRouter({ params }: IRequest, env: Env) {
 		},
 	});
 	posts.map((post) => feed.addItem(getFeedItemFromPost(post)));
-
-	if (feed.items.length !== 0) {
-		await env.MY_KV_NAMESPACE.put(key, feed.rss2(), { expirationTtl: 60 * 5 });
-	}
 
 	return new Response(feed.rss2(), {
 		status: 200,

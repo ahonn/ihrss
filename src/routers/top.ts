@@ -4,38 +4,27 @@ import { capitalize } from 'lodash-es';
 import puppeteer from '@cloudflare/puppeteer';
 import { Feed } from 'feed';
 import pkg from '../../package.json';
-import parserPost from '../post';
-import { getFeedItemFromPost } from '../utils';
+import { getFeedItemFromPost, parserPost } from '../utils';
 import format from 'date-fns/format';
+import previousMonday from 'date-fns/previousMonday';
 
 export default async function topRouter({ params }: IRequest, env: Env) {
 	if (!['today', 'week', 'month', 'all-time'].includes(params.type)) {
 		return new Response(`Not found`, { status: 404 });
 	}
 
-	const key = `top:${params.type}`;
-	const cache = await env.MY_KV_NAMESPACE.get(key, { type: 'text' });
-	if (cache) {
-		return new Response(cache, {
-			status: 200,
-			headers: { 'Content-Type': `application/xml` },
-		});
-	}
-
 	const browser = await puppeteer.launch(env.MY_BROWSER);
-	const page = await browser.newPage();
-	await page.setViewport({ width: 1280, height: 800 });
 
 	const posts: IndieHackerPost[] = [];
 	const getTopPosts = async (slug: string) => {
-		const browser = await puppeteer.launch(env.MY_BROWSER);
 		const page = await browser.newPage();
 		await page.setViewport({ width: 1280, height: 800 });
 		await page.goto(env.BASE_URL! + `/top/${slug}`);
+		console.log(env.BASE_URL! + `/top/${slug}`);
 		await page.waitForSelector('.community__posts-section');
 
 		const html = await page.content();
-		await browser.close();
+		await page.close();
 
 		const $ = cheerio.load(html);
 		const $section = $('.posts-section__posts');
@@ -59,7 +48,7 @@ export default async function topRouter({ params }: IRequest, env: Env) {
 			break;
 		}
 		case 'week': {
-			const slug = 'week-of-' + format(new Date(), 'yyyy-MM-dd');
+			const slug = 'week-of-' + format(previousMonday(new Date()), 'yyyy-MM-dd');
 			const items = await getTopPosts(slug);
 			posts.push(...items);
 			break;
@@ -77,9 +66,13 @@ export default async function topRouter({ params }: IRequest, env: Env) {
 		}
 		default:
 	}
+	await browser.close();
 
 	const feed = new Feed({
-		title: `${env.RSS_TITLE}: ${capitalize(params.type.split('-').join(' '))}`,
+		title: `${env.RSS_TITLE}: ${params.type
+			.split('-')
+			.map((t) => capitalize(t))
+			.join(' ')}`,
 		description: env.RSS_DESCRIPTION,
 		id: env.BASE_URL!,
 		link: env.BASE_URL!,
@@ -90,10 +83,6 @@ export default async function topRouter({ params }: IRequest, env: Env) {
 		},
 	});
 	posts.map((post) => feed.addItem(getFeedItemFromPost(post)));
-
-	if (feed.items.length !== 0) {
-		await env.MY_KV_NAMESPACE.put(key, feed.rss2(), { expirationTtl: 60 * 5 });
-	}
 
 	return new Response(feed.rss2(), {
 		status: 200,
