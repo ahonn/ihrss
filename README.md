@@ -2,7 +2,7 @@
 
 [ihrss.io](https://ihrss.io) provides users to access the latest and most popular stories from [Indie Hackers](https://www.indiehackers.com) in RSS format.
 
-> RSS updates are not real-time, they are updated every five minutes to minimize the impact on the Indie Hackers website.
+> RSS updates are not real-time, they are updated every ten minutes to minimize the impact on the Indie Hackers website.
 
 <a href="https://www.buymeacoffee.com/yuexunjiang"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=yuexunjiang&button_colour=FFDD00&font_colour=000000&font_family=Comic&outline_colour=000000&coffee_colour=ffffff" /></a>
 
