@@ -3,7 +3,7 @@ main = "src/worker.ts"
 compatibility_date = "2023-08-07"
 compatibility_flags = [ "nodejs_compat" ]
 
-# browser = { binding = "MYBROWSER", type = "browser" }
+browser = { binding = "MYBROWSER", type = "browser" }
 
 # Variable bindings. These are arbitrary, plaintext strings (similar to environment variables)
 # Note: Use secrets to store sensitive data.
@@ -16,9 +16,10 @@ RSS_URL = "http://ihrss.io"
 
 # Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
 # Docs: https://developers.cloudflare.com/workers/runtime-apis/kv
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+[[kv_namespaces]]
+binding = "MY_KV_NAMESPACE"
+id = "cfcd8596e6e54a14817c20ba55e94e88"
+preview_id="ba3a4ba5579e4cff9b22baf0c945fb8c"
 
 # Bind an R2 Bucket. Use R2 to store arbitrarily large blobs of data, such as files.
 # Docs: https://developers.cloudflare.com/r2/api/workers/workers-api-usage/
