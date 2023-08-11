@@ -3,7 +3,7 @@ main = "src/worker.ts"
 compatibility_date = "2023-08-07"
 compatibility_flags = [ "nodejs_compat" ]
 
-browser = { binding = "MYBROWSER", type = "browser" }
+browser = { binding = "MY_BROWSER", type = "browser" }
 
 # Variable bindings. These are arbitrary, plaintext strings (similar to environment variables)
 # Note: Use secrets to store sensitive data.
